@@ -1,0 +1,27 @@
+{% extends "base.html.twig" %}
+
+{% block body %}
+    <div class="container">
+        {{ form_start(form) }}
+        <div class="row">
+            <div class="col-3">
+                {{ form_label(form.name) }}
+            </div>
+            <div class="col-9">
+                {{ form_widget(form.name) }}
+            </div>
+            <div class="col-3">
+                {{ form_label(form.releaseOn) }}
+            </div>
+            <div class="col-9">
+                {{ form_widget(form.releaseOn) }}
+            </div>
+        </div>
+        {{ form_end(form) }}
+        {#{{ dump(result) }}#}
+    </div>
+
+    {#{{ form_row(form.name) }}#}
+    {#{{ form_row(form.releaseOn) }}#}
+
+{% endblock %}
