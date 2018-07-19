@@ -35,9 +35,9 @@ class User implements UserInterface
     /**
      * @ORM\Column(type="json_array", nullable=true)
      */
-    private $roles;
+    private $roles = ["ROLE_USER"];
 
-    /**
+    /*
      * @ORM\Column(type="string", length=255)
      */
     private $plainPassword;
@@ -115,14 +115,16 @@ class User implements UserInterface
      */
     public function eraseCredentials()
     {
-        $this->plainPassword=null;
+        $this->plainPassword = null;
     }
 
-    public function addRole($role) {
+    public function addRole($role)
+    {
         $this->roles[] = $role;
     }
 
-    public function removeRole($role) {
+    public function removeRole($role)
+    {
         $index = array_search($role, $this->roles, true);
         if ($index !== false) {
             array_splice($this->roles, $index, 1);

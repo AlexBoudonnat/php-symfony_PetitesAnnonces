@@ -13,9 +13,12 @@
                         <td>{{ product.name }}</td>
                         <td>{{ product.releaseOn|date }}</td>
                         <td>
-                            <a href="{{ url("product.show", {"product":product.id}) }}">Show</a> |
-                            <a href="{{ url("product.update", {"product":product.id}) }}">Update</a> |
-                            <a onclick="return confirm('are you sure?');" href="{{ url("product.delete", {"product":product.id}) }}">Delete</a>
+                            <a href="{{ url("product.show", {"product":product.id}) }}">Show</a>
+                            {% if is_granted('IS_AUTHENTICATED_REMEMBERED') %}
+                                |
+                                <a href="{{ url("product.update", {"product":product.id}) }}">Update</a> |
+                                <a onclick="return confirm('are you sure?');" href="{{ url("product.delete", {"product":product.id}) }}">Delete</a>
+                            {% endif %}
                         </td>
                     </tr>
                 {% else %}

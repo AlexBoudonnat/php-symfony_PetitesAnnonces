@@ -10,10 +10,16 @@
     <body>
         <header class="container">
             <div class="row">
-                <div class="col"><a href="{{ url("app_home") }}">Home</a></div>
-                <div class="col"><a href="{{ url("app_hello") }}">HelloWorld</a></div>
-                <div class="col"><a href="{{ url("product.all") }}">All Products</a></div>
-                <div class="col"><a href="{{ url("product.add") }}">Add Product</a></div>
+                {% if is_granted('IS_AUTHENTICATED_REMEMBERED') %}
+                    <div class="col"><a href="{{ url("app_home") }}">Home</a></div>
+                    <div class="col"><a href="{{ url("product.all") }}">All Products</a></div>
+                    <div class="col"><a href="{{ url("product.add") }}">Add Product</a></div>
+                    <div class="col"><a href="{{ url("logout") }}">Logout</a></div>
+                {% else %}
+                    <div class="col-2"><a href="{{ url("login") }}">Login</a></div>
+                    <div class="col-2"><a href="{{ url("user.register") }}">Register</a></div>
+                    <div class="col-2"><a href="{{ url("product.all") }}">All Products</a></div>
+                {% endif %}
             </div>
         </header>
         <hr/>

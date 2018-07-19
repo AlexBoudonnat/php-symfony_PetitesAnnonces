@@ -6,14 +6,18 @@
                 <tr>
                     <th>Name</th>
                     <th>Release On</th>
-                    <th>Action</th>
+                    {% if is_granted('IS_AUTHENTICATED_REMEMBERED') %}
+                        <th>Action</th>
+                    {% endif %}
                 </tr>
                 <tr>
                     <td>{{ product.name }}</td>
                     <td>{{ product.releaseOn|date }}</td>
                     <td>
-                        <a onclick="return confirm('are you sure?');" href="{{ url("product.update", {"product":product.id}) }}">Update</a> |
-                        <a onclick="return confirm('are you sure?');" href="{{ url("product.delete", {"product":product.id}) }}">Delete</a>
+                        {% if is_granted('IS_AUTHENTICATED_REMEMBERED') %}
+                            <a onclick="return confirm('are you sure?');" href="{{ url("product.update", {"product":product.id}) }}">Update</a> |
+                            <a onclick="return confirm('are you sure?');" href="{{ url("product.delete", {"product":product.id}) }}">Delete</a>
+                        {% endif %}
                     </td>
                 </tr>
             </table>
