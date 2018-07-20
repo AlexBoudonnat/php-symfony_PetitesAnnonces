@@ -3,10 +3,15 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
+ * @UniqueEntity("email", message="This email already exists.")
+ * @UniqueEntity("username", message="This username already exists.")
+ * @UniqueEntity("phone", message="This phone number already exists.")
  */
 class User implements UserInterface
 {
@@ -18,12 +23,15 @@ class User implements UserInterface
     private $id;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, unique=true)
+     * @Assert\NotBlank()
      */
     private $username;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, unique=true)
+     * @Assert\NotBlank()
+     * @Assert\Email()
      */
     private $email;
 
@@ -34,6 +42,7 @@ class User implements UserInterface
 
     /**
      * @ORM\Column(type="json_array", nullable=true)
+     * @Assert\NotBlank()
      */
     private $roles = ["ROLE_USER"];
 
@@ -41,6 +50,30 @@ class User implements UserInterface
      * @ORM\Column(type="string", length=255)
      */
     private $plainPassword;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank()
+     */
+    private $firstname;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank()
+     */
+    private $lastname;
+
+    //^
+    //(?:(?:\+|00)33|0)     # Dialing code
+    //\s*[1-9]              # First number (from 1 to 9)
+    //(?:[\s.-]*\d{2}){4}   # End of the phone number
+    //$
+    /**
+     * @ORM\Column(type="string", length=30, unique=true)
+     * @Assert\NotBlank()
+     * @Assert\Regex("/^[0-9]*$/", message="Phone number not valid.")
+     */
+    private $phone;
 
     public function getId()
     {
@@ -139,6 +172,42 @@ class User implements UserInterface
     public function setPlainPassword(string $plainPassword): self
     {
         $this->plainPassword = $plainPassword;
+
+        return $this;
+    }
+
+    public function getFirstname(): ?string
+    {
+        return $this->firstname;
+    }
+
+    public function setFirstname(string $firstname): self
+    {
+        $this->firstname = $firstname;
+
+        return $this;
+    }
+
+    public function getLastname(): ?string
+    {
+        return $this->lastname;
+    }
+
+    public function setLastname(string $lastname): self
+    {
+        $this->lastname = $lastname;
+
+        return $this;
+    }
+
+    public function getPhone(): ?string
+    {
+        return $this->phone;
+    }
+
+    public function setPhone(string $phone): self
+    {
+        $this->phone = $phone;
 
         return $this;
     }

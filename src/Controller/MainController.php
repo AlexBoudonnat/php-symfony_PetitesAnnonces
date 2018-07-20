@@ -8,6 +8,7 @@
 
 namespace App\Controller;
 
+use App\Service\MsgGenerator;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
@@ -20,8 +21,10 @@ class MainController extends Controller
      * @Route("/", name="app_home")
      * @Template("main/home.html.twig")
      */
-    public function home()
+    public function home(MsgGenerator $msgGenerator)
     {
-        return ["project_name" => "Alex's Project"];
+        $message = $msgGenerator->getHappyMessage();
+
+        return ["project_name" => $message];
     }
 }

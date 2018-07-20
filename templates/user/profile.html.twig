@@ -1,0 +1,37 @@
+{% extends "base.html.twig" %}
+{% block body %}
+    <div class="container">
+        <div class="row">
+            {% for label, messages in app.flashes %}
+                {% for message in messages %}
+                    <div style="color: red" class="flash-{{ label }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endfor %}
+            <table class="table">
+                <tr>
+                    <th>Firstname</th>
+                    <th>Lastname</th>
+                    <th>Username</th>
+                    <th>Phone Number</th>
+                    <th>Email Adress</th>
+                    <th>Actions</th>
+                </tr>
+                <tr>
+                    <td>{{ user.firstname }}</td>
+                    <td>{{ user.lastname }}</td>
+                    <td>{{ user.username }}</td>
+                    <td>{{ user.phone }}</td>
+                    <td>{{ user.email }}</td>
+                    <td>
+                        <a href="{{ path('user.update') }}">Update</a> |
+                        <a href="{{ path('user.changePwd') }}">Change Password</a> |
+                        <a href="{{ path('user.delete') }}">Delete</a>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+{% endblock %}
+
