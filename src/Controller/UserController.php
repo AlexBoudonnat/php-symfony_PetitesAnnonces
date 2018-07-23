@@ -15,9 +15,10 @@ use App\Form\UserType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Security\Core\Encoder\PasswordEncoderInterface;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use Symfony\Component\Security\Csrf\TokenStorage\TokenStorageInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class UserController extends Controller
@@ -81,7 +82,17 @@ class UserController extends Controller
     public function showProfile()
     {
         $user = $this->getUser();
-        return $this->render("user/profile.html.twig", ["user" => $user]);
+        $currentUser = $user;
+        return $this->render("user/profile.html.twig", ["user" => $user, "currentUser" => $currentUser]);
+    }
+
+    /**
+     * @Route("/user/show/{user}", name="user.show")
+     */
+    public function show(User $user)
+    {
+        $currentUser = $this->getUser();
+        return $this->render("user/profile.html.twig", ["user" => $user, "currentUser" => $currentUser]);
     }
 
     /**
@@ -138,12 +149,14 @@ class UserController extends Controller
     /**
      * @Route("/user/delete", name="user.delete")
      */
-    public function delete()
+    public function delete(SessionInterface $session)
     {
-//        $user = $this->getUser();
-//        $em = $this->getDoctrine()->getManager();
-//        $em->remove($user);
-//        $em->flush();
-        return $this->redirectToRoute("logout");
+        $user = $this->getUser();
+        $this->get('security.token_storage')->setToken(null);
+        $session->invalidate();
+        $em = $this->getDoctrine()->getManager();
+        $em->remove($user);
+        $em->flush();
+        return $this->redirectToRoute("app_home");
     }
 }

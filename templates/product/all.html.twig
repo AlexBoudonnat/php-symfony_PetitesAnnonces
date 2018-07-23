@@ -5,16 +5,18 @@
             <table class="table col-12">
                 <tr>
                     <th>Name</th>
+                    <th>Owner</th>
                     <th>Release On</th>
                     <th>Action</th>
                 </tr>
                 {% for product in products %}
                     <tr>
                         <td>{{ product.name }}</td>
+                        <td><a href="{{ url("user.show", {"user":product.userId.id}) }}">{{ product.userId.firstname }} {{ product.userId.lastname }}</a></td>
                         <td>{{ product.releaseOn|date }}</td>
                         <td>
                             <a href="{{ url("product.show", {"product":product.id}) }}">Show</a>
-                            {% if is_granted('IS_AUTHENTICATED_REMEMBERED') %}
+                            {% if is_granted('IS_AUTHENTICATED_REMEMBERED') and product.userId == user %}
                                 |
                                 <a href="{{ url("product.update", {"product":product.id}) }}">Update</a> |
                                 <a onclick="return confirm('are you sure?');" href="{{ url("product.delete", {"product":product.id}) }}">Delete</a>

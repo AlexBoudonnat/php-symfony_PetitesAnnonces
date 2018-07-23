@@ -4,6 +4,33 @@
     <div class="row">
         <h2 class="col-12">Proverbe du jour :</h2>
         <p class="col-12">{{ project_name }}</p>
+        <hr class="col-12">
+        <h2 class="col-12">Your Products :</h2>
+        <table class="table col-12">
+            <tr>
+                <th>Name</th>
+                <th>Release On</th>
+                <th>Action</th>
+            </tr>
+            {% for product in products %}
+                <tr>
+                    <td>{{ product.name }}</td>
+                    <td>{{ product.releaseOn|date }}</td>
+                    <td>
+                        <a href="{{ url("product.show", {"product":product.id}) }}">Show</a>
+                        {% if is_granted('IS_AUTHENTICATED_REMEMBERED') %}
+                            |
+                            <a href="{{ url("product.update", {"product":product.id}) }}">Update</a> |
+                            <a onclick="return confirm('are you sure?');" href="{{ url("product.delete", {"product":product.id}) }}">Delete</a>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="3">No content available</td>
+                </tr>
+            {% endfor %}
+        </table>
     </div>
 </div>
 {% endblock %}

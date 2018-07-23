@@ -2,25 +2,35 @@
 {% block body %}
     <div class="container">
         <div class="row">
-            <table class="table">
+            {% for label, messages in app.flashes %}
+                {% for message in messages %}
+                    <div style="color: red" class="flash-{{ label }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endfor %}
+            <table class="table col-12">
                 <tr>
                     <th>Name</th>
+                    <th>Owner</th>
                     <th>Release On</th>
-                    {% if is_granted('IS_AUTHENTICATED_REMEMBERED') %}
+                    {% if is_granted('IS_AUTHENTICATED_REMEMBERED') and product.userId == user %}
                         <th>Action</th>
                     {% endif %}
                 </tr>
                 <tr>
                     <td>{{ product.name }}</td>
+                    <td>{{ product.userId.firstname }} {{ product.userId.lastname }}</td>
                     <td>{{ product.releaseOn|date }}</td>
                     <td>
-                        {% if is_granted('IS_AUTHENTICATED_REMEMBERED') %}
-                            <a onclick="return confirm('are you sure?');" href="{{ url("product.update", {"product":product.id}) }}">Update</a> |
+                        {% if is_granted('IS_AUTHENTICATED_REMEMBERED') and product.userId == user %}
+                            <a href="{{ url("product.update", {"product":product.id}) }}">Update</a> |
                             <a onclick="return confirm('are you sure?');" href="{{ url("product.delete", {"product":product.id}) }}">Delete</a>
                         {% endif %}
                     </td>
                 </tr>
             </table>
+            <img src="\uploads\pictures\{{ product.pictureName }}" alt="image de {{ product.name }}">
         </div>
     </div>
 {% endblock %}

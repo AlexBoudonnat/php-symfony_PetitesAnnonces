@@ -16,7 +16,9 @@
                     <th>Username</th>
                     <th>Phone Number</th>
                     <th>Email Adress</th>
-                    <th>Actions</th>
+                    {% if user.id == currentUser.id %}
+                        <th>Actions</th>
+                    {% endif %}
                 </tr>
                 <tr>
                     <td>{{ user.firstname }}</td>
@@ -24,11 +26,13 @@
                     <td>{{ user.username }}</td>
                     <td>{{ user.phone }}</td>
                     <td>{{ user.email }}</td>
-                    <td>
-                        <a href="{{ path('user.update') }}">Update</a> |
-                        <a href="{{ path('user.changePwd') }}">Change Password</a> |
-                        <a href="{{ path('user.delete') }}">Delete</a>
-                    </td>
+                    {% if user.id == currentUser.id %}
+                        <td>
+                            <a href="{{ path('user.update') }}">Update</a> |
+                            <a href="{{ path('user.changePwd') }}">Change Password</a> |
+                            <a href="{{ path('user.delete') }}">Delete</a>
+                        </td>
+                    {% endif %}
                 </tr>
             </table>
         </div>

@@ -11,6 +11,7 @@ namespace App\Controller;
 
 use App\Entity\Product;
 use App\Form\ProductFormType;
+use App\Service\FileUploader;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
@@ -29,8 +30,9 @@ class ProductController extends Controller
     /**
      * @Route("/add", name="product.add")
      */
-    public function add(Request $request)
+    public function add(Request $request, FileUploader $fileUploader)
     {
+        $user = $this->getUser();
         $product = new Product();
         $form = $this->createForm(ProductFormType::class, $product)
             ->add("save", SubmitType::class, ["label" => "Add Product"]);
@@ -38,6 +40,11 @@ class ProductController extends Controller
         if ($form->isSubmitted() && $form->isValid()) {
             $em = $this->getDoctrine()->getManager();
 
+            $file = $form->get('pictureName')->getData();
+            $fileName = $fileUploader->upload($file);
+
+            $product->setPictureName($fileName);
+            $product->setUserId($user);
             $em->persist($product);
             $em->flush();
             return $this->redirectToRoute("product.all");
@@ -52,9 +59,10 @@ class ProductController extends Controller
      */
     public function all()
     {
+        $user = $this->getUser();
         $em = $this->getDoctrine()->getManager();
-        $products = $em->getRepository(Product::class)->findAll();
-        return $this->render("product/all.html.twig", ["products" => $products]);
+        $products = $em->getRepository(Product::class)->findBy([],['releaseOn' => 'DESC']);
+        return $this->render("product/all.html.twig", ["products" => $products, "user" => $user]);
     }
 
     /**
@@ -62,7 +70,8 @@ class ProductController extends Controller
      */
     public function show(Product $product)
     {
-        return $this->render("product/show.html.twig", ["product" => $product]);
+        $user = $this->getUser();
+        return $this->render("product/show.html.twig", ["product" => $product, "user" => $user]);
     }
 
     /**
@@ -70,18 +79,31 @@ class ProductController extends Controller
      */
     public function update(Request $request, Product $product)
     {
-        $form = $this->createForm(ProductFormType::class, $product)
-            ->add("save", SubmitType::class, ["label" => "Update Product"]);
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+        $user = $this->getUser();
 
-        $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
-            $em = $this->getDoctrine()->getManager();
-            $em->flush();
-            return $this->redirectToRoute("product.all");
+        if ($product->getUserId() == $user) {
+
+            $form = $this->createForm(ProductFormType::class, $product)
+                ->add("save", SubmitType::class, ["label" => "Update Product"]);
+
+            $form->handleRequest($request);
+            if ($form->isSubmitted() && $form->isValid()) {
+                $em = $this->getDoctrine()->getManager();
+                $em->flush();
+                return $this->redirectToRoute("product.all");
+
+            }
+
+            return $this->render("product/update.html.twig", ["form" => $form->createView()]);
 
         }
 
-        return $this->render("product/update.html.twig", ["form" => $form->createView()]);
+        $this->addFlash(
+            'notice',
+            'You cannot update Products you don\'t own !!'
+        );
+        return $this->render("product/show.html.twig", ["product" => $product, "user" => $user]);
     }
 
     /**
@@ -89,9 +111,20 @@ class ProductController extends Controller
      */
     public function delete(Product $product)
     {
-        $em = $this->getDoctrine()->getManager();
-        $em->remove($product);
-        $em->flush();
-        return $this->redirectToRoute("product.all");
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+        $user = $this->getUser();
+
+        if ($product->getUserId() == $user) {
+            $em = $this->getDoctrine()->getManager();
+            $em->remove($product);
+            $em->flush();
+            return $this->redirectToRoute("product.all");
+        }
+
+        $this->addFlash(
+            'notice',
+            'You cannot delete Products you don\'t own !!'
+        );
+        return $this->render("product/show.html.twig", ["product" => $product, "user" => $user]);
     }
 }
