@@ -18,7 +18,7 @@
                 </tr>
                 {% for product in products %}
                     {% if is_granted("ROLE_ADMIN") %}
-                            <tr style="{{ product.allowed == false ? 'background-color: lightpink' : '' }}">
+                        <tr style="{{ product.allowed == false ? 'background-color: lightpink' : '' }}">
                             <td><a href="{{ url("product.show", {"product":product.id}) }}">{{ product.name }}</a></td>
                             <td><a href="{{ url("user.show", {"user":product.userId.id}) }}">{{ product.userId.firstname }} {{ product.userId.lastname }}</a></td>
                             <td>{{ product.releaseOn|date }}</td>

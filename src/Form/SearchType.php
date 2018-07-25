@@ -5,22 +5,20 @@ namespace App\Form;
 use App\Entity\Product;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\DateType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class ProductFormType extends AbstractType
+class SearchType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add("name", TextType::class)
-            ->add("releaseOn", DateType::class, ["widget" => "single_text"])
-            ->add("description", TextType::class)
+            ->add("search", TextType::class)
             ->add("localisation", ChoiceType::class, array(
                 'choices' => array(
-                    'Choose your region' => null,
+                    'Location' => null,
                     'Auvergne-Rhône-Alpes' => 'Auvergne-Rhône-Alpes',
                     'Bourgogne-Franche-Comté' => 'Bourgogne-Franche-Comté',
                     'Bretagne' => 'Bretagne',
@@ -38,7 +36,7 @@ class ProductFormType extends AbstractType
             ))
             ->add("category", ChoiceType::class, array(
                 'choices' => array(
-                    'Choose a category' => null,
+                    'Category' => null,
                     'Emploi' => 'emploi',
                     'Véhicules' => 'vehicules',
                     'Immobilier' => 'immobilier',
@@ -50,7 +48,7 @@ class ProductFormType extends AbstractType
                     'Autres' => 'autres',
                 )
             ))
-            ->add("otherDetails", TextType::class)
+            ->add("save", SubmitType::class, ["label" => "Search"])
         ;
     }
 

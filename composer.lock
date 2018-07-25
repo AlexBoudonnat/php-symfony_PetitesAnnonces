@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "549a4e2f04e8390353e6334673f62511",
+    "content-hash": "f8a9812aadcd013ae5098dfc2ae4f933",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -2460,7 +2460,7 @@
         },
         {
             "name": "symfony/filesystem",
-            "version": "v4.1.1",
+            "version": "v4.1.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/filesystem.git",

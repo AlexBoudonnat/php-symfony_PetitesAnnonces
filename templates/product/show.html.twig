@@ -9,28 +9,54 @@
                     </div>
                 {% endfor %}
             {% endfor %}
-            <table class="table col-12">
-                <tr>
-                    <th>Name</th>
-                    <th>Owner</th>
-                    <th>Release On</th>
-                    {% if is_granted('IS_AUTHENTICATED_REMEMBERED') and product.userId == user %}
-                        <th>Action</th>
-                    {% endif %}
-                </tr>
-                <tr>
-                    <td>{{ product.name }}</td>
-                    <td>{{ product.userId.firstname }} {{ product.userId.lastname }}</td>
-                    <td>{{ product.releaseOn|date }}</td>
-                    <td>
-                        {% if is_granted('IS_AUTHENTICATED_REMEMBERED') and product.userId == user %}
-                            <a href="{{ url("product.update", {"product":product.id}) }}">Update</a> |
-                            <a onclick="return confirm('are you sure?');" href="{{ url("product.delete", {"product":product.id}) }}">Delete</a>
+            {% if is_granted("ROLE_ADMIN") or product.allowed %}
+                <table class="table col-12">
+                    <tr>
+                        <th>Name</th>
+                        <th>Owner</th>
+                        <th>Release On</th>
+                        <th>Category</th>
+                    </tr>
+                    <tr>
+                        <td>{{ product.name }}</td>
+                        <td><a href="{{ url("user.show", {"user":product.userId.id}) }}">{{ product.userId.firstname }} {{ product.userId.lastname }}</a></td>
+                        <td>{{ product.releaseOn|date }}</td>
+                        <td>{{ product.category }}</td>
+                    </tr>
+                    <tr>
+                        <th>Description</th>
+                        <th>Location</th>
+                        <th>Other Details</th>
+                        {% if is_granted("ROLE_ADMIN") or product.userId == user %}
+                            <th>Action</th>
                         {% endif %}
-                    </td>
-                </tr>
-            </table>
-            <img src="\uploads\pictures\{{ product.pictureName }}" alt="image de {{ product.name }}">
+                    </tr>
+                    <tr>
+                        <td>{{ product.description }}</td>
+                        <td>{{ product.localisation }}</td>
+                        <td>{{ product.otherDetails }}</td>
+                        <td>
+                            {% if product.userId == user %}
+                                <a href="{{ url("product.update", {"product":product.id}) }}">Update</a> |
+                                <a href="{{ url("product.updatePic", {"product":product.id}) }}">Change Picture</a> |
+                                <a onclick="return confirm('are you sure?');" href="{{ url("product.delete", {"product":product.id}) }}">Delete</a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                </table>
+                <hr>
+                <h3 class="col-12" style="text-align: center">Picture :</h3>
+                <div class="col-12" style="display: flex; justify-content: center">
+                    <img src="\uploads\pictures\{{ product.pictureName }}" alt="image de {{ product.name }}">
+                </div>
+            {% else %}
+                <div class="col-12" style="color: red">This Product is not visible anymore !</div>
+            {% endif %}
+            {% if is_granted("ROLE_ADMIN") %}
+                <div class="col-12" style="text-align: center">
+                    <a href="{{ url("product.moderate", {"product":product.id}) }}">Moderate the product</a>
+                </div>
+            {% endif %}
         </div>
     </div>
 {% endblock %}

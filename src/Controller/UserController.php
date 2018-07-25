@@ -12,6 +12,7 @@ namespace App\Controller;
 use App\Entity\User;
 use App\Form\UserChangeType;
 use App\Form\UserType;
+use App\Service\Mailer;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpFoundation\Request;
@@ -29,7 +30,7 @@ class UserController extends Controller
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
      * @Route("/register", name="user.register")
      */
-    public function registerAction(Request $request, UserPasswordEncoderInterface $passwordEncoder, ValidatorInterface $validator)
+    public function registerAction(Request $request, UserPasswordEncoderInterface $passwordEncoder, ValidatorInterface $validator, Mailer $mailer)
     {
         // 1) Build the form
         $user = new User();
@@ -39,15 +40,6 @@ class UserController extends Controller
         // 2) Handle the submit (will only happen on POST)
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-
-            // 3) Check for errors
-            $errors = $validator->validate($user);
-
-            if (count($errors) > 0) {
-                $errorsString = (string) $errors;
-
-                return $this->render('registration/register.html.twig', ['errors' => $errors]);
-            }
 
             // 3) Encode the password (you could also do this via Doctrine listener)
             $password = $passwordEncoder->encodePassword($user, $user->getPlainPassword());
@@ -67,8 +59,14 @@ class UserController extends Controller
             $em->persist($user);
             $em->flush();
 
-            // ... do any other work - like sending them an email, etc
-            // maybe set a "flash" success message for the user
+            //6) Send a welcome email
+            $mailer->sendMail($user);
+
+            //7) flash msg of profile creation
+            $this->addFlash(
+                'notice',
+                'Hello '.$user->getUsername().'. You Profile as been created ! You can login now.'
+            );
 
             return $this->redirectToRoute("app_home");
         }

@@ -10,10 +10,10 @@
             <div class="col-9">
                 {{ form_widget(form.name) }}
             </div>
-            <div class="col-3" style="text-align: right">
+            <div class="col-3" style="text-align: right; display: none">
                 {{ form_label(form.releaseOn) }}
             </div>
-            <div class="col-9">
+            <div class="col-9" style="display: none">
                 {{ form_widget(form.releaseOn) }}
             </div>
             <div class="col-3" style="text-align: right">
@@ -21,12 +21,6 @@
             </div>
             <div class="col-9">
                 {{ form_widget(form.description) }}
-            </div>
-            <div class="col-3" style="text-align: right">
-                {{ form_label(form.pictureName) }}
-            </div>
-            <div class="col-9">
-                {{ form_widget(form.pictureName) }}
             </div>
             <div class="col-3" style="text-align: right">
                 {{ form_label(form.localisation) }}

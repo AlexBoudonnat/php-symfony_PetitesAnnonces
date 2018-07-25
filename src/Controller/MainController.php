@@ -9,6 +9,7 @@
 namespace App\Controller;
 
 use App\Entity\Product;
+use App\Entity\User;
 use App\Service\MsgGenerator;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -24,10 +25,10 @@ class MainController extends Controller
      */
     public function home(MsgGenerator $msgGenerator)
     {
+        /** @var User $user */
         $user = $this->getUser();
-        $em = $this->getDoctrine()->getManager();
-        $products = $em->getRepository(Product::class)->findBy(['userId' => $user],['releaseOn' => 'DESC']);
-
+        $products = $user->getProducts();
+        dump($user);
         $message = $msgGenerator->getHappyMessage();
 
         return ["products" => $products, "project_name" => $message];

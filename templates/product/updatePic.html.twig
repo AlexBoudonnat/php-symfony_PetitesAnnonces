@@ -4,43 +4,43 @@
     <div class="container">
         {{ form_start(form) }}
         <div class="row">
-            <div class="col-3" style="text-align: right">
+            <div class="col-3" style="display: none">
                 {{ form_label(form.name) }}
             </div>
-            <div class="col-9">
+            <div class="col-9" style="display: none">
                 {{ form_widget(form.name) }}
             </div>
-            <div class="col-3" style="text-align: right">
+            <div class="col-3" style="display: none">
                 {{ form_label(form.releaseOn) }}
             </div>
-            <div class="col-9">
+            <div class="col-9" style="display: none">
                 {{ form_widget(form.releaseOn) }}
             </div>
-            <div class="col-3" style="text-align: right">
+            <div class="col-3" style="display: none">
                 {{ form_label(form.description) }}
             </div>
-            <div class="col-9">
+            <div class="col-9" style="display: none">
                 {{ form_widget(form.description) }}
             </div>
-            <div class="col-9 offset-3" style="margin-top: 15px">
+            <div class="col-12" style="margin-top: 15px">
                 {{ form_row(form.pictureName) }}
             </div>
-            <div class="col-3" style="text-align: right">
+            <div class="col-3" style="display: none">
                 {{ form_label(form.localisation) }}
             </div>
-            <div class="col-9">
+            <div class="col-9" style="display: none">
                 {{ form_widget(form.localisation) }}
             </div>
-            <div class="col-3" style="text-align: right">
+            <div class="col-3" style="display: none">
                 {{ form_label(form.category) }}
             </div>
-            <div class="col-9">
+            <div class="col-9" style="display: none">
                 {{ form_widget(form.category) }}
             </div>
-            <div class="col-3" style="text-align: right">
+            <div class="col-3" style="display: none">
                 {{ form_label(form.otherDetails) }}
             </div>
-            <div class="col-9">
+            <div class="col-9" style="display: none">
                 {{ form_widget(form.otherDetails) }}
             </div>
         </div>

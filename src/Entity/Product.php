@@ -34,7 +34,6 @@ class Product
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Assert\Image()
      */
     private $pictureName;
 
@@ -58,6 +57,16 @@ class Product
      * @ORM\JoinColumn(nullable=false)
      */
     private $userId;
+
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    private $allowed = true;
+
+    /*
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $search;
 
     public function getId()
     {
@@ -156,6 +165,30 @@ class Product
     public function setUserId(?User $userId): self
     {
         $this->userId = $userId;
+
+        return $this;
+    }
+
+    public function getAllowed(): ?bool
+    {
+        return $this->allowed;
+    }
+
+    public function setAllowed(?bool $allowed): self
+    {
+        $this->allowed = $allowed;
+
+        return $this;
+    }
+
+    public function getSearch(): ?string
+    {
+        return $this->search;
+    }
+
+    public function setSearch(?string $search): self
+    {
+        $this->search = $search;
 
         return $this;
     }
