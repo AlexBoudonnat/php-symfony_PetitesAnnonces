@@ -9,12 +9,11 @@
 namespace App\Controller;
 
 
-use App\Entity\Product;
+use App\Entity\Search;
 use App\Form\SearchType;
+use App\Repository\ProductRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -23,92 +22,42 @@ class SearchController extends Controller
     /**
      * @Route("/search", name="product.search")
      */
-    public function search(Request $request)
+    public function search(Request $request, EntityManagerInterface $em, ProductRepository $productRepository)
     {
         $user = $this->getUser();
-        $product = new Product();
-        $form = $this->createFormBuilder($product)
-            ->add("search", TextType::class)
-            ->add("localisation", ChoiceType::class, array(
-                'choices' => array(
-                    'Location' => null,
-                    'Auvergne-Rhône-Alpes' => 'Auvergne-Rhône-Alpes',
-                    'Bourgogne-Franche-Comté' => 'Bourgogne-Franche-Comté',
-                    'Bretagne' => 'Bretagne',
-                    'Centre-Val de Loire' => 'Centre-Val de Loire',
-                    'Corse' => 'Corse',
-                    'Grand Est' => 'Grand Est',
-                    'Hauts-de-France' => 'Hauts-de-France',
-                    'Île-de-France' => 'Île-de-France',
-                    'Normandie' => 'Normandie',
-                    'Nouvelle-Aquitaine' => 'Nouvelle-Aquitaine',
-                    'Occitanie' => 'Occitanie',
-                    'Pays de la Loire' => 'Pays de la Loire',
-                    'Provence-Alpes-Côte d\'Azur' => 'Provence-Alpes-Côte d\'Azur',
-                )
-            ))
-            ->add("category", ChoiceType::class, array(
-                'choices' => array(
-                    'Category' => null,
-                    'Emploi' => 'emploi',
-                    'Véhicules' => 'vehicules',
-                    'Immobilier' => 'immobilier',
-                    'Vacances' => 'vacances',
-                    'Multimedia' => 'multimedia',
-                    'Materiel Professionnel' => 'materielPro',
-                    'Services' => 'services',
-                    'Maison' => 'maison',
-                    'Autres' => 'autres',
-                )
-            ))
-            ->add("save", SubmitType::class, ["label" => "Search"])
-            ->getForm();
-//        $form = $this->createForm(SearchType::class, $product);
+        $search = new Search();
+
+        $form = $this->createForm(SearchType::class, $search);
         $form->handleRequest($request);
+
         if ($form->isSubmitted() && $form->isValid()) {
-            $em = $this->getDoctrine()->getManager();
 
-            dump($product);
+            if ($search->getCategory() == null && $search->getLocalisation() == null) {
 
-            if ($product->getCategory() == null && $product->getLocalisation() == null) {
-                $products = $em->getRepository(Product::class)->createQueryBuilder('p')
-                    ->andWhere('p.name LIKE :name')
-                    ->setParameter('name', '%'.$product->getSearch().'%')
-                    ->getQuery()
-                    ->execute();
+                $products = $productRepository->getSearchByKeywords($search, $em);
 
-            } elseif ($product->getCategory() == null) {
-                $products = $em->getRepository(Product::class)->createQueryBuilder('p')
-                    ->andWhere('p.name LIKE :name')
-                    ->setParameter('name', '%'.$product->getSearch().'%')
-                    ->andWhere('p.localisation = :localisation')
-                    ->setParameter('localisation', $product->getLocalisation())
-                    ->getQuery()
-                    ->execute();
+            } elseif ($search->getCategory() == null) {
 
-            } elseif ($product->getLocalisation() == null) {
-                $products = $em->getRepository(Product::class)->createQueryBuilder('p')
-                    ->where('p.category = :category')
-                    ->setParameter('category', $product->getCategory())
-                    ->andWhere('p.name LIKE :name OR p.description LIKE :name')
-                    ->setParameter('name', '%'.$product->getSearch().'%')
-                    ->getQuery()
-                    ->execute();
+                $products = $productRepository->getSearchByKeywordsAndLocalisation($search, $em);
+
+            } elseif ($search->getLocalisation() == null) {
+
+                $products = $productRepository->getSearchByKeywordsAndCategory($search, $em);
 
             } else {
-                $products = $em->getRepository(Product::class)->createQueryBuilder('p')
-                    ->where('p.category = :category')
-                    ->setParameter('category', $product->getCategory())
-                    ->andWhere('p.name LIKE :name')
-                    ->setParameter('name', '%'.$product->getSearch().'%')
-                    ->andWhere('p.localisation = :localisation')
-                    ->setParameter('localisation', $product->getLocalisation())
-                    ->getQuery()
-                    ->execute();
+
+//                $products = $em->getRepository(Product::class)->createQueryBuilder('p')
+//                    ->where('p.category = :category')
+//                    ->setParameter('category', $search->getCategory())
+//                    ->andWhere('p.name LIKE :name OR p.description LIKE :name')
+//                    ->setParameter('name', '%'.$search->getSearch().'%')
+//                    ->andWhere('p.localisation = :localisation')
+//                    ->setParameter('localisation', $search->getLocalisation())
+//                    ->getQuery()
+//                    ->execute();
+
+                $products = $productRepository->getSearchByKeywordsAndLocalisationAndCategory($search, $em);
             }
-
-
-
 
             return $this->render("search/result.html.twig", ["products" => $products, "user" => $user]);
 

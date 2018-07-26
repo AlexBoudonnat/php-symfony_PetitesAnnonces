@@ -12,6 +12,7 @@ namespace App\Controller;
 use App\Entity\Product;
 use App\Form\ProductFormType;
 use App\Service\FileUploader;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
@@ -80,12 +81,11 @@ class ProductController extends Controller
     /**
      * @Route("/update/{product}", name="product.update")
      */
-    public function update(Request $request, Product $product)
+    public function update(Request $request, Product $product, AuthorizationCheckerInterface $authorizationChecker)
     {
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         $user = $this->getUser();
 
-        if ($product->getUserId() == $user) {
+        if ($product->getUserId() == $user or $authorizationChecker->isGranted("ROLE_ADMIN")) {
 
             $form = $this->createForm(ProductFormType::class, $product)
                 ->add("save", SubmitType::class, ["label" => "Update Product"]);
@@ -112,12 +112,12 @@ class ProductController extends Controller
     /**
      * @Route("/updatePicture/{product}", name="product.updatePic")
      */
-    public function updatePicture(Request $request, Product $product, FileUploader $fileUploader, Filesystem $filesystem)
+    public function updatePicture(Request $request, Product $product, FileUploader $fileUploader, Filesystem $filesystem, AuthorizationCheckerInterface $authorizationChecker, EntityManagerInterface $em)
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         $user = $this->getUser();
 
-        if ($product->getUserId() == $user) {
+        if ($product->getUserId() == $user or $authorizationChecker->isGranted("ROLE_ADMIN")) {
 
             $form = $this->createForm(ProductFormType::class, $product)
                 ->add("pictureName", FileType::class, ["data_class" => null ])
@@ -128,8 +128,6 @@ class ProductController extends Controller
             $form->handleRequest($request);
             if ($form->isSubmitted() && $form->isValid()) {
                 $filesystem->remove($oldFile);
-                $em = $this->getDoctrine()->getManager();
-
 
                 $file = $form->get('pictureName')->getData();
                 $fileName = $fileUploader->upload($file);
@@ -183,12 +181,12 @@ class ProductController extends Controller
     /**
      * @Route("/delete/{product}", name="product.delete")
      */
-    public function delete(Product $product)
+    public function delete(Product $product, AuthorizationCheckerInterface $authorizationChecker)
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         $user = $this->getUser();
 
-        if ($product->getUserId() == $user) {
+        if ($product->getUserId() == $user or $authorizationChecker->isGranted("ROLE_ADMIN")) {
             $em = $this->getDoctrine()->getManager();
             $em->remove($product);
             $em->flush();

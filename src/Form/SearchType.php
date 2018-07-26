@@ -2,7 +2,7 @@
 
 namespace App\Form;
 
-use App\Entity\Product;
+use App\Entity\Search;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -15,7 +15,7 @@ class SearchType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add("search", TextType::class)
+            ->add("search", TextType::class, ['label' => 'Keyword(s) (in name or description)', 'required' => false])
             ->add("localisation", ChoiceType::class, array(
                 'choices' => array(
                     'Location' => null,
@@ -55,7 +55,7 @@ class SearchType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => Product::class,
+            'data_class' => Search::class,
         ]);
     }
 }

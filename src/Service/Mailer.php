@@ -24,7 +24,7 @@ class Mailer
         $this->mailer     = $mailer;
         $this->templating = $templating;
     }
-    public function sendMail(User $user)
+    public function sendWelcomeMail(User $user)
     {
         try {
             $message = (new \Swift_Message('Welcome Email'))

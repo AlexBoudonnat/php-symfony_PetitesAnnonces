@@ -60,7 +60,7 @@ class UserController extends Controller
             $em->flush();
 
             //6) Send a welcome email
-            $mailer->sendMail($user);
+            $mailer->sendWelcomeMail($user);
 
             //7) flash msg of profile creation
             $this->addFlash(

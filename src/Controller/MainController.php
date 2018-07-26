@@ -21,7 +21,6 @@ class MainController extends Controller
 
     /**
      * @Route("/", name="app_home")
-     * @Template("main/home.html.twig")
      */
     public function home(MsgGenerator $msgGenerator)
     {
@@ -31,6 +30,6 @@ class MainController extends Controller
         dump($user);
         $message = $msgGenerator->getHappyMessage();
 
-        return ["products" => $products, "project_name" => $message];
+        return $this->render("main/home.html.twig", ["products" => $products, "project_name" => $message]);
     }
 }
