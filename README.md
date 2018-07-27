@@ -1,5 +1,7 @@
 # php-symfony_PetitesAnnonces
 
+https://github.com/decima/symfony-learning-guide
+
 Symfony Step By Step Tutorial
 This repository is linked to this course (in progress). Feel free to contribute.
 
