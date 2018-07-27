@@ -2,7 +2,6 @@
 
 namespace App\Entity;
 
-use App\Entity\Product;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -16,7 +15,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @UniqueEntity("username", message="This username already exists.")
  * @UniqueEntity("phone", message="This phone number already exists.")
  */
-class User implements UserInterface
+class User implements UserInterface, \JsonSerializable
 {
     /**
      * @ORM\Id()
@@ -254,5 +253,27 @@ class User implements UserInterface
         }
 
         return $this;
+    }
+
+    /**
+     * Specify data which should be serialized to JSON
+     * @link http://php.net/manual/en/jsonserializable.jsonserialize.php
+     * @return mixed data which can be serialized by <b>json_encode</b>,
+     * which is a value of any type other than a resource.
+     * @since 5.4.0
+     */
+    public function jsonSerialize()
+    {
+        return [
+          'user' => [
+              'id' => $this->id,
+              'firstname' => $this->firstname,
+              'lastname' => $this->lastname,
+              'username' => $this->username,
+              'email' => $this->email,
+              'phone' => $this->phone,
+//              'product' => $this->products,
+          ]
+        ];
     }
 }

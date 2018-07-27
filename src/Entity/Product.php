@@ -8,7 +8,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 /**
  * @ORM\Entity(repositoryClass="App\Repository\ProductRepository")
  */
-class Product
+class Product implements \JsonSerializable
 {
     /**
      * @ORM\Id()
@@ -191,5 +191,29 @@ class Product
         $this->search = $search;
 
         return $this;
+    }
+
+    /**
+     * Specify data which should be serialized to JSON
+     * @link http://php.net/manual/en/jsonserializable.jsonserialize.php
+     * @return mixed data which can be serialized by <b>json_encode</b>,
+     * which is a value of any type other than a resource.
+     * @since 5.4.0
+     */
+    public function jsonSerialize()
+    {
+        return [
+            'product' => [
+                'id' => $this->id,
+                'name' => $this->name,
+                'release_on' => $this->releaseOn,
+                'description' => $this->description,
+                'picture_name' => $this->pictureName,
+                'localisation' => $this->localisation,
+                'category' => $this->category,
+                'other_details' => $this->otherDetails,
+                'user' => $this->userId,
+            ]
+        ];
     }
 }
