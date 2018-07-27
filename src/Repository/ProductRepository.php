@@ -50,46 +50,46 @@ class ProductRepository extends ServiceEntityRepository
     }
     */
 
-    public function getSearchByKeywords(Search $search, EntityManagerInterface $em)
-    {
-        return $em->getRepository(Product::class)->createQueryBuilder('p')
-            ->andWhere('p.name LIKE :name OR p.description LIKE :name')
-            ->setParameter('name', '%'.$search->getSearch().'%')
-            ->getQuery()
-            ->execute();
-    }
-
-    public function getSearchByKeywordsAndLocalisation(Search $search, EntityManagerInterface $em)
-    {
-        return $em->getRepository(Product::class)->createQueryBuilder('p')
-            ->andWhere('p.name LIKE :name OR p.description LIKE :name')
-            ->setParameter('name', '%'.$search->getSearch().'%')
-            ->andWhere('p.localisation = :localisation')
-            ->setParameter('localisation', $search->getLocalisation())
-            ->getQuery()
-            ->execute();
-    }
-
-    public function getSearchByKeywordsAndCategory(Search $search, EntityManagerInterface $em)
-    {
-        return $em->getRepository(Product::class)->createQueryBuilder('p')
-            ->andwhere('p.category = :category')
-            ->setParameter('category', $search->getCategory())
-            ->andWhere('p.name LIKE :name OR p.description LIKE :name')
-            ->setParameter('name', '%'.$search->getSearch().'%')
-            ->getQuery()
-            ->execute();
-    }
+//    public function getSearchByKeywords(Search $search, EntityManagerInterface $em)
+//    {
+//        return $em->getRepository(Product::class)->createQueryBuilder('p')
+//            ->andWhere('p.name LIKE :name OR p.description LIKE :name')
+//            ->setParameter('name', '%'.$search->getSearch().'%')
+//            ->getQuery()
+//            ->execute();
+//    }
+//
+//    public function getSearchByKeywordsAndLocalisation(Search $search, EntityManagerInterface $em)
+//    {
+//        return $em->getRepository(Product::class)->createQueryBuilder('p')
+//            ->andWhere('p.name LIKE :name OR p.description LIKE :name')
+//            ->setParameter('name', '%'.$search->getSearch().'%')
+//            ->andWhere('p.localisation = :localisation')
+//            ->setParameter('localisation', $search->getLocalisation())
+//            ->getQuery()
+//            ->execute();
+//    }
+//
+//    public function getSearchByKeywordsAndCategory(Search $search, EntityManagerInterface $em)
+//    {
+//        return $em->getRepository(Product::class)->createQueryBuilder('p')
+//            ->andwhere('p.category = :category')
+//            ->setParameter('category', $search->getCategory())
+//            ->andWhere('p.name LIKE :name OR p.description LIKE :name')
+//            ->setParameter('name', '%'.$search->getSearch().'%')
+//            ->getQuery()
+//            ->execute();
+//    }
 
     public function getSearchByKeywordsAndLocalisationAndCategory(Search $search, EntityManagerInterface $em)
     {
         return $em->getRepository(Product::class)->createQueryBuilder('p')
-            ->andwhere('p.category = :category')
-            ->setParameter('category', $search->getCategory())
+            ->andwhere('p.category LIKE :category')
+            ->setParameter('category', '%'.$search->getCategory().'%')
             ->andWhere('p.name LIKE :name OR p.description LIKE :name')
             ->setParameter('name', '%'.$search->getSearch().'%')
-            ->andWhere('p.localisation = :localisation')
-            ->setParameter('localisation', $search->getLocalisation())
+            ->andWhere('p.localisation LIKE :localisation')
+            ->setParameter('localisation', '%'.$search->getLocalisation().'%')
             ->getQuery()
             ->execute();
     }

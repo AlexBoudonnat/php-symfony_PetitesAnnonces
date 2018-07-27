@@ -32,32 +32,7 @@ class SearchController extends Controller
 
         if ($form->isSubmitted() && $form->isValid()) {
 
-            if ($search->getCategory() == null && $search->getLocalisation() == null) {
-
-                $products = $productRepository->getSearchByKeywords($search, $em);
-
-            } elseif ($search->getCategory() == null) {
-
-                $products = $productRepository->getSearchByKeywordsAndLocalisation($search, $em);
-
-            } elseif ($search->getLocalisation() == null) {
-
-                $products = $productRepository->getSearchByKeywordsAndCategory($search, $em);
-
-            } else {
-
-//                $products = $em->getRepository(Product::class)->createQueryBuilder('p')
-//                    ->where('p.category = :category')
-//                    ->setParameter('category', $search->getCategory())
-//                    ->andWhere('p.name LIKE :name OR p.description LIKE :name')
-//                    ->setParameter('name', '%'.$search->getSearch().'%')
-//                    ->andWhere('p.localisation = :localisation')
-//                    ->setParameter('localisation', $search->getLocalisation())
-//                    ->getQuery()
-//                    ->execute();
-
-                $products = $productRepository->getSearchByKeywordsAndLocalisationAndCategory($search, $em);
-            }
+            $products = $productRepository->getSearchByKeywordsAndLocalisationAndCategory($search, $em);
 
             return $this->render("search/result.html.twig", ["products" => $products, "user" => $user]);
 
